@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧙 Шидтэний Даалгавар</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0a0a1a;color:#e0d8ff;font-family:Georgia,serif;min-height:100vh;padding:16px 14px 80px;}
+.wrap{max-width:480px;margin:0 auto;}
+
+/* Header */
+.hero{text-align:center;padding:24px 0 20px;border-bottom:1px solid #2a2040;margin-bottom:22px;}
+.hero-title{font-size:26px;font-weight:700;color:#c8a8ff;letter-spacing:-0.5px;}
+.hero-sub{font-size:13px;color:#7060a0;font-style:italic;margin-top:4px;}
+
+/* Player card */
+.player-card{background:linear-gradient(135deg,#1a0f35,#0f1a35);border:1px solid #4a2a8a;border-radius:14px;padding:20px;margin-bottom:20px;position:relative;overflow:hidden;}
+.player-card::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(180,100,255,0.15),transparent);border-radius:50%;}
+.player-top{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+.player-avatar{font-size:48px;line-height:1;}
+.player-info{flex:1;}
+.player-name{font-size:18px;font-weight:700;color:#d4a8ff;}
+.player-rank{font-size:12px;color:#9070c0;font-family:monospace;letter-spacing:1px;margin-top:2px;}
+.xp-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.xp-label{font-family:monospace;font-size:11px;color:#9070c0;letter-spacing:1px;}
+.xp-val{font-family:monospace;font-size:12px;color:#c8a8ff;font-weight:700;}
+.xp-bar-track{height:10px;background:#1a0f30;border-radius:5px;overflow:hidden;border:1px solid #3a1a6a;}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,#8040e0,#c060ff);border-radius:5px;transition:width 0.6s ease;}
+.rank-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;}
+.badge{padding:4px 10px;border-radius:12px;font-size:10px;font-family:monospace;letter-spacing:1px;border:1px solid;}
+.badge.earned{background:rgba(180,100,255,0.2);border-color:#8040e0;color:#c8a8ff;}
+.badge.locked{background:rgba(60,40,100,0.2);border-color:#2a1a50;color:#4a3a70;}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;background:#110a22;padding:6px;border-radius:12px;border:1px solid #2a1a50;margin-bottom:20px;}
+.tab{flex:1;padding:10px 4px;border:none;border-radius:8px;background:transparent;color:#6050a0;font-family:monospace;font-size:11px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;}
+.tab.active{background:#6030c0;color:#fff;font-weight:700;}
+
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* Subject sections */
+.subject{background:#110a22;border:1px solid #2a1a50;border-radius:12px;padding:16px;margin-bottom:14px;}
+.subject-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;cursor:pointer;}
+.subject-name{font-size:15px;font-weight:700;color:#c8a8ff;}
+.subject-xp{font-family:monospace;font-size:11px;color:#8060c0;background:#1a0f35;padding:3px 10px;border-radius:10px;}
+.subject-arrow{color:#6050a0;transition:transform 0.2s;}
+.subject-body{display:block;}
+.subject-body.collapsed{display:none;}
+
+/* Add task */
+.add-row{display:flex;gap:8px;margin-bottom:10px;}
+.add-input{flex:1;background:#0d0820;border:1px solid #2a1a50;border-radius:8px;color:#e0d8ff;font-family:Georgia,serif;font-size:14px;padding:10px 12px;outline:none;}
+.add-input:focus{border-color:#6030c0;}
+.add-input::placeholder{color:#4a3a70;font-style:italic;}
+.xp-select{background:#0d0820;border:1px solid #2a1a50;border-radius:8px;color:#c8a8ff;font-family:monospace;font-size:12px;padding:10px 8px;outline:none;cursor:pointer;}
+.add-btn{padding:10px 14px;background:#6030c0;border:none;border-radius:8px;color:#fff;font-size:18px;cursor:pointer;transition:all 0.2s;}
+.add-btn:active{transform:scale(0.95);}
+
+/* Tasks */
+.task-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#0d0820;border:1px solid #1a1035;border-radius:8px;margin-bottom:6px;transition:all 0.3s;}
+.task-item.done{opacity:0.5;}
+.task-check{width:22px;height:22px;border:2px solid #4a2a8a;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all 0.2s;background:transparent;}
+.task-check.checked{background:#6030c0;border-color:#6030c0;}
+.task-text{flex:1;font-size:14px;line-height:1.4;}
+.task-item.done .task-text{text-decoration:line-through;color:#4a3a70;}
+.task-xp{font-family:monospace;font-size:10px;color:#8060c0;background:#1a0f35;padding:2px 8px;border-radius:8px;flex-shrink:0;}
+.task-del{background:none;border:none;color:#3a2a60;cursor:pointer;font-size:14px;padding:2px;transition:color 0.2s;}
+.task-del:hover{color:#e06060;}
+
+/* Add subject */
+.add-subject-btn{width:100%;padding:12px;background:transparent;border:1px dashed #2a1a50;border-radius:12px;color:#6050a0;font-family:monospace;font-size:12px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;margin-top:4px;}
+.add-subject-btn:hover{border-color:#6030c0;color:#c8a8ff;}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.stat-box{background:#110a22;border:1px solid #2a1a50;border-radius:12px;padding:16px;text-align:center;}
+.stat-n{font-family:monospace;font-size:34px;font-weight:700;color:#c8a8ff;}
+.stat-l{font-size:12px;color:#6050a0;font-style:italic;margin-top:4px;}
+.chart-box{background:#110a22;border:1px solid #2a1a50;border-radius:12px;padding:16px;margin-bottom:14px;}
+.chart-title{font-family:monospace;font-size:10px;color:#8060c0;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;}
+.chart-row{margin-bottom:12px;}
+.chart-label{font-size:12px;color:#9070c0;margin-bottom:5px;display:flex;justify-content:space-between;}
+.chart-track{height:10px;background:#0d0820;border-radius:5px;overflow:hidden;}
+.chart-fill{height:100%;background:linear-gradient(90deg,#6030c0,#c060ff);border-radius:5px;}
+
+/* Toast */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#6030c0;color:#fff;padding:12px 24px;border-radius:10px;font-family:monospace;font-size:13px;font-weight:700;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;letter-spacing:1px;}
+.toast.show{opacity:1;}
+
+/* Modal */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;}
+.modal-bg.show{display:flex;}
+.modal{background:#110a22;border:1px solid #4a2a8a;border-radius:14px;padding:24px;width:90%;max-width:360px;}
+.modal h3{color:#c8a8ff;margin-bottom:16px;font-size:17px;}
+.modal input{width:100%;background:#0d0820;border:1px solid #2a1a50;border-radius:8px;color:#e0d8ff;font-size:15px;padding:12px;outline:none;margin-bottom:12px;}
+.modal input:focus{border-color:#6030c0;}
+.modal-emoji{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.em-btn{font-size:22px;padding:6px 10px;border:1px solid #2a1a50;border-radius:8px;background:transparent;cursor:pointer;}
+.em-btn.sel{border-color:#6030c0;background:rgba(96,48,192,0.2);}
+.modal-btns{display:flex;gap:8px;}
+.modal-ok{flex:1;padding:12px;background:#6030c0;border:none;border-radius:8px;color:#fff;font-family:monospace;font-size:13px;font-weight:700;cursor:pointer;}
+.modal-cancel{padding:12px 16px;background:transparent;border:1px solid #2a1a50;border-radius:8px;color:#6050a0;font-family:monospace;font-size:13px;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-title">🧙 Шидтэний Зам</div>
+    <div class="hero-sub">Даалгавар бүр чамайг хүчирхэг болгоно</div>
+  </div>
+
+  <!-- Player Card -->
+  <div class="player-card">
+    <div class="player-top">
+      <div class="player-avatar" id="p-avatar">🌱</div>
+      <div class="player-info">
+        <div class="player-name" id="p-rank-name">Шинэхэн Сурагч</div>
+        <div class="player-rank" id="p-level">ТҮВШИН 1</div>
+      </div>
+    </div>
+    <div class="xp-row">
+      <span class="xp-label">⚡ ТУРШЛАГЫН ОНО</span>
+      <span class="xp-val" id="p-xp-val">0 / 100 XP</span>
+    </div>
+    <div class="xp-bar-track"><div class="xp-bar-fill" id="p-xp-bar" style="width:0%"></div></div>
+    <div class="rank-badges" id="p-badges"></div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('tasks',this)">📚 Даалгавар</button>
+    <button class="tab" onclick="showTab('stats',this)">📊 Дүн</button>
+  </div>
+
+  <!-- TASKS -->
+  <div id="panel-tasks" class="panel active">
+    <div id="subjects-list"></div>
+    <button class="add-subject-btn" onclick="openAddSubject()">+ Хичээл нэмэх</button>
+  </div>
+
+  <!-- STATS -->
+  <div id="panel-stats" class="panel">
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-n" id="st-done">0</div><div class="stat-l">дууссан даалгавар</div></div>
+      <div class="stat-box"><div class="stat-n" id="st-total-xp">0</div><div class="stat-l">нийт XP</div></div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-n" id="st-pending">0</div><div class="stat-l">үлдсэн даалгавар</div></div>
+      <div class="stat-box"><div class="stat-n" id="st-subjects">0</div><div class="stat-l">хичээлийн тоо</div></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Хичээл тус бүрийн явц</div>
+      <div id="subject-chart"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Add Subject Modal -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <h3>📚 Шинэ хичээл нэмэх</h3>
+    <input id="modal-input" placeholder="Хичээлийн нэр..." />
+    <div class="modal-emoji" id="modal-emojis"></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Болих</button>
+      <button class="modal-ok" onclick="confirmAddSubject()">Нэмэх ✨</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var RANKS = [
+  {min:0,   name:"🌱 Шинэхэн Сурагч", avatar:"🌱", level:1},
+  {min:100, name:"📖 Суралцагч",       avatar:"📖", level:2},
+  {min:250, name:"⭐ Чадварлаг",       avatar:"⭐", level:3},
+  {min:500, name:"🔮 Мэргэн",          avatar:"🔮", level:4},
+  {min:900, name:"🧙 Шидтэн",          avatar:"🧙", level:5},
+  {min:1500,name:"✨ Их Шидтэн",       avatar:"✨", level:6},
+];
+var EMOJIS = ["📐","📝","📊","🔬","💻","🎨","📖","🌍","🎵","⚗️","🏛️","🧮"];
+var XP_OPTIONS = [5,10,20,30];
+var selEmoji = "📝";
+
+var data = JSON.parse(localStorage.getItem("mage_tasks") || "null") || {
+  xp: 0,
+  subjects: [
+    {id:1, name:"Математик", emoji:"📐", tasks:[]},
+    {id:2, name:"Англи хэл", emoji:"📖", tasks:[]},
+  ]
+};
+
+function save(){ localStorage.setItem("mage_tasks", JSON.stringify(data)); }
+
+function getRank(xp){
+  var r = RANKS[0];
+  for(var i=0;i<RANKS.length;i++){ if(xp>=RANKS[i].min) r=RANKS[i]; }
+  return r;
+}
+
+function getNextRank(xp){
+  for(var i=0;i<RANKS.length;i++){ if(RANKS[i].min>xp) return RANKS[i]; }
+  return null;
+}
+
+function updatePlayer(){
+  var xp = data.xp;
+  var rank = getRank(xp);
+  var next = getNextRank(xp);
+  document.getElementById("p-avatar").textContent = rank.avatar;
+  document.getElementById("p-rank-name").textContent = rank.name;
+  document.getElementById("p-level").textContent = "ТҮВШИН " + rank.level;
+  var pct = next ? Math.round(((xp - rank.min)/(next.min - rank.min))*100) : 100;
+  document.getElementById("p-xp-bar").style.width = pct + "%";
+  document.getElementById("p-xp-val").textContent = xp + (next ? " / " + next.min : "") + " XP";
+  var badges = document.getElementById("p-badges");
+  badges.innerHTML = RANKS.map(function(r){
+    var earned = xp >= r.min;
+    return '<span class="badge '+(earned?"earned":"locked")+'">'+r.avatar+" "+r.name.split(" ").slice(1).join(" ")+'</span>';
+  }).join("");
+}
+
+function showTab(name, btn){
+  document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("active");});
+  document.querySelectorAll(".tab").forEach(function(b){b.classList.remove("active");});
+  document.getElementById("panel-"+name).classList.add("active");
+  btn.classList.add("active");
+  if(name==="stats") renderStats();
+}
+
+function renderSubjects(){
+  var el = document.getElementById("subjects-list");
+  if(!data.subjects.length){ el.innerHTML=""; return; }
+  el.innerHTML = data.subjects.map(function(s){
+    var total = s.tasks.length;
+    var done = s.tasks.filter(function(t){return t.done;}).length;
+    var sxp = s.tasks.filter(function(t){return t.done;}).reduce(function(a,t){return a+t.xp;},0);
+    return '<div class="subject" id="subj-'+s.id+'">' +
+      '<div class="subject-header" onclick="toggleSubject('+s.id+')">' +
+        '<span class="subject-name">'+s.emoji+' '+s.name+'</span>' +
+        '<span class="subject-xp">'+done+'/'+total+' · '+sxp+' XP</span>' +
+      '</div>' +
+      '<div class="subject-body" id="body-'+s.id+'">' +
+        '<div class="add-row">' +
+          '<input class="add-input" id="inp-'+s.id+'" placeholder="Даалгавар бичих..." />' +
+          '<select class="xp-select" id="xps-'+s.id+'">'+
+            XP_OPTIONS.map(function(x){return '<option value="'+x+'">'+x+'XP</option>';}).join("")+
+          '</select>' +
+          '<button class="add-btn" onclick="addTask('+s.id+')">+</button>' +
+        '</div>' +
+        s.tasks.map(function(t){
+          return '<div class="task-item'+(t.done?" done":"")+'" id="task-'+t.id+'">' +
+            '<div class="task-check'+(t.done?" checked":"")+'" onclick="toggleTask('+s.id+','+t.id+')">'+(t.done?"✓":"")+'</div>' +
+            '<span class="task-text">'+t.text+'</span>' +
+            '<span class="task-xp">+'+t.xp+' XP</span>' +
+            '<button class="task-del" onclick="delTask('+s.id+','+t.id+')">✕</button>' +
+          '</div>';
+        }).join("") +
+        '<button class="add-subject-btn" style="margin-top:8px;font-size:11px;padding:8px;color:#5a3a80;border-color:#1a0f35;" onclick="delSubject('+s.id+')">🗑 Хичээл устгах</button>' +
+      '</div>' +
+    '</div>';
+  }).join("");
+}
+
+function toggleSubject(id){
+  var body = document.getElementById("body-"+id);
+  body.classList.toggle("collapsed");
+}
+
+function addTask(sid){
+  var inp = document.getElementById("inp-"+sid);
+  var xpsel = document.getElementById("xps-"+sid);
+  var txt = inp.value.trim();
+  if(!txt) return;
+  var s = data.subjects.find(function(s){return s.id===sid;});
+  s.tasks.push({id:Date.now(), text:txt, xp:parseInt(xpsel.value), done:false});
+  inp.value = "";
+  save(); renderSubjects(); updatePlayer();
+}
+
+function toggleTask(sid, tid){
+  var s = data.subjects.find(function(s){return s.id===sid;});
+  var t = s.tasks.find(function(t){return t.id===tid;});
+  t.done = !t.done;
+  if(t.done){
+    data.xp += t.xp;
+    var rank = getRank(data.xp - t.xp);
+    var newRank = getRank(data.xp);
+    showToast("⚡ +" + t.xp + " XP олсон!");
+    if(newRank.level > rank.level) setTimeout(function(){ showToast("🎉 " + newRank.name + " боллоо!"); }, 1200);
+  } else {
+    data.xp = Math.max(0, data.xp - t.xp);
+    showToast("↩️ -" + t.xp + " XP буцаав");
+  }
+  save(); renderSubjects(); updatePlayer();
+}
+
+function delTask(sid, tid){
+  var s = data.subjects.find(function(s){return s.id===sid;});
+  var t = s.tasks.find(function(t){return t.id===tid;});
+  if(t.done) data.xp = Math.max(0, data.xp - t.xp);
+  s.tasks = s.tasks.filter(function(t){return t.id!==tid;});
+  save(); renderSubjects(); updatePlayer();
+}
+
+function delSubject(sid){
+  if(!confirm("Энэ хичээлийг устгах уу?")) return;
+  var s = data.subjects.find(function(s){return s.id===sid;});
+  var doneXP = s.tasks.filter(function(t){return t.done;}).reduce(function(a,t){return a+t.xp;},0);
+  data.xp = Math.max(0, data.xp - doneXP);
+  data.subjects = data.subjects.filter(function(s){return s.id!==sid;});
+  save(); renderSubjects(); updatePlayer();
+}
+
+function openAddSubject(){
+  selEmoji = "📝";
+  document.getElementById("modal-input").value = "";
+  document.getElementById("modal-emojis").innerHTML = EMOJIS.map(function(e){
+    return '<button class="em-btn'+(e===selEmoji?" sel":"")+'" onclick="pickEmoji(this,\''+e+'\')">'+e+'</button>';
+  }).join("");
+  document.getElementById("modal-bg").classList.add("show");
+}
+
+function closeModal(){ document.getElementById("modal-bg").classList.remove("show"); }
+
+function pickEmoji(btn, e){
+  document.querySelectorAll(".em-btn").forEach(function(b){b.classList.remove("sel");});
+  btn.classList.add("sel");
+  selEmoji = e;
+}
+
+function confirmAddSubject(){
+  var name = document.getElementById("modal-input").value.trim();
+  if(!name) return;
+  data.subjects.push({id:Date.now(), name:name, emoji:selEmoji, tasks:[]});
+  save(); renderSubjects(); closeModal();
+}
+
+function renderStats(){
+  var allTasks = data.subjects.reduce(function(a,s){return a.concat(s.tasks);}, []);
+  var done = allTasks.filter(function(t){return t.done;}).length;
+  document.getElementById("st-done").textContent = done;
+  document.getElementById("st-total-xp").textContent = data.xp;
+  document.getElementById("st-pending").textContent = allTasks.length - done;
+  document.getElementById("st-subjects").textContent = data.subjects.length;
+  var maxXP = Math.max.apply(null, data.subjects.map(function(s){
+    return s.tasks.reduce(function(a,t){return a+t.xp;},0);
+  }).concat([1]));
+  document.getElementById("subject-chart").innerHTML = data.subjects.map(function(s){
+    var totalXP = s.tasks.reduce(function(a,t){return a+t.xp;},0);
+    var doneXP = s.tasks.filter(function(t){return t.done;}).reduce(function(a,t){return a+t.xp;},0);
+    var pct = totalXP ? Math.round((doneXP/totalXP)*100) : 0;
+    return '<div class="chart-row">' +
+      '<div class="chart-label"><span>'+s.emoji+' '+s.name+'</span><span style="color:#c8a8ff;font-family:monospace">'+pct+'%</span></div>' +
+      '<div class="chart-track"><div class="chart-fill" style="width:'+pct+'%"></div></div>' +
+    '</div>';
+  }).join("") || '<div style="color:#4a3a70;font-style:italic;font-size:13px">Хичээл нэмээрэй...</div>';
+}
+
+function showToast(msg){
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(function(){ t.classList.remove("show"); }, 2000);
+}
+
+// Enter key for task input
+document.addEventListener("keydown", function(e){
+  if(e.key==="Enter" && e.target.classList.contains("add-input")){
+    var sid = parseInt(e.target.id.replace("inp-",""));
+    addTask(sid);
+  }
+});
+
+renderSubjects();
+updatePlayer();
+</script>
+</body>
+</html>
