@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --gold: linear-gradient(135deg, #ffd700 0%, #ffae00 100%);
+            --silver: linear-gradient(135deg, #e0e0e0 0%, #b0b0b0 100%);
+            --bronze: linear-gradient(135deg, #cd7f32 0%, #a0522d 100%);
+            --up-green: #2ecc71;
+            --down-red: #e74c3c;
+            --neutral-gray: #95a5a6;
+        }
+
+        body {
+            background-color: #121212;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .podium-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            perspective: 1000px;
+        }
+
+        /* Base Card Styling */
+        .podium-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 20px;
+            border-radius: 16px 16px 8px 8px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+
+        /* Specific Ranks */
+        .rank-2 {
+            width: 120px;
+            height: 180px;
+            background: var(--silver);
+            z-index: 1;
+        }
+
+        .rank-1 {
+            width: 150px;
+            height: 240px;
+            background: var(--gold);
+            z-index: 2;
+            transform: translateZ(20px); /* Brings it forward */
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .rank-3 {
+            width: 120px;
+            height: 150px;
+            background: var(--bronze);
+            z-index: 1;
+        }
+
+        /* Rank Numbers */
+        .rank-number {
+            font-size: 3rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        /* Trend Indicator Pill */
+        .trend-indicator {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .up { color: var(--up-green); }
+        .down { color: var(--down-red); }
+        .neutral { color: var(--neutral-gray); }
+
+    </style>
+</head>
+<body>
+
+<div class="podium-container">
+    
+    <div class="podium-card rank-2">
+        <div class="trend-indicator up">↑ 2</div>
+        <div class="rank-number">2</div>
+        <div class="label">Silver</div>
+    </div>
+
+    <div class="podium-card rank-1">
+        <div class="trend-indicator neutral">— 0</div>
+        <div class="rank-number">1</div>
+        <div class="label">Winner</div>
+    </div>
+
+    <div class="podium-card rank-3">
+        <div class="trend-indicator down">↓ 1</div>
+        <div class="rank-number">3</div>
+        <div class="label">Bronze</div>
+    </div>
+
+</div>
+
+</body>
+</html>
