@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduSphere — Мэдлэгийн Ертөнц</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #16161f;
+    --border: rgba(255,255,255,0.06);
+    --text: #f0f0f5;
+    --muted: #7070a0;
+    --phys: #5b8cff;
+    --phys-glow: rgba(91,140,255,0.18);
+    --eng: #ff7b7b;
+    --eng-glow: rgba(255,123,123,0.18);
+    --geo: #4ecfb3;
+    --geo-glow: rgba(78,207,179,0.18);
+    --accent: #c8b4ff;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top:0; left:0; right:0; z-index:100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px;
+    height: 60px;
+    background: rgba(10,10,15,0.72);
+    backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    background: linear-gradient(135deg, #c8b4ff, #5b8cff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .nav-links { display:flex; gap:32px; }
+  .nav-links a {
+    font-size: 0.82rem; font-weight: 500; letter-spacing: 0.04em;
+    color: var(--muted); text-decoration: none; text-transform: uppercase;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 80px 24px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; pointer-events: none;
+  }
+  .orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(90px); opacity: 0.28;
+  }
+  .orb1 { width:520px; height:520px; top:-100px; left:-140px; background: radial-gradient(circle, #5b8cff 0%, transparent 70%); }
+  .orb2 { width:400px; height:400px; bottom:-60px; right:-80px; background: radial-gradient(circle, #c8b4ff 0%, transparent 70%); }
+  .orb3 { width:300px; height:300px; top:50%; left:50%; transform:translate(-50%,-50%); background: radial-gradient(circle, #4ecfb3 0%, transparent 70%); opacity:0.12; }
+
+  .hero-eyebrow {
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 20px;
+    opacity:0; animation: fadeUp .8s .2s forwards;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 900; line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    opacity:0; animation: fadeUp .9s .4s forwards;
+  }
+  .hero-title span { display:block; }
+  .hero-title .hl {
+    background: linear-gradient(135deg, #c8b4ff 0%, #5b8cff 50%, #4ecfb3 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-sub {
+    max-width: 500px;
+    font-size: 1.05rem; color: var(--muted); line-height: 1.7;
+    margin-bottom: 48px;
+    opacity:0; animation: fadeUp .9s .6s forwards;
+  }
+  .hero-cta {
+    display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+    opacity:0; animation: fadeUp .9s .8s forwards;
+  }
+  .btn {
+    padding: 14px 32px; border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    text-decoration: none; border: none;
+    transition: all .25s;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #5b8cff, #c8b4ff);
+    color: #fff;
+    box-shadow: 0 8px 32px rgba(91,140,255,0.35);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 42px rgba(91,140,255,0.45); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.05); }
+
+  /* ── TYPEWRITER BAR ── */
+  .typewriter-bar {
+    position: relative; z-index:1;
+    margin: 80px auto 0;
+    max-width: 760px; width:90%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px 36px;
+    opacity:0; animation: fadeUp .9s 1s forwards;
+  }
+  .tw-label {
+    font-size: 0.68rem; font-weight:600; letter-spacing:0.18em;
+    text-transform:uppercase; color: var(--muted); margin-bottom: 12px;
+  }
+  .tw-text {
+    font-size: 1.05rem; color: var(--text); min-height: 1.7em;
+    line-height: 1.6;
+  }
+  .tw-cursor {
+    display: inline-block; width: 2px; height: 1.1em;
+    background: var(--accent); margin-left: 2px;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+
+  /* ── SUBJECTS GRID ── */
+  .subjects-section {
+    padding: 120px 48px 80px;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .section-label {
+    font-size: 0.72rem; font-weight:600; letter-spacing:0.2em;
+    text-transform:uppercase; color: var(--muted); margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem); font-weight:700;
+    margin-bottom: 64px;
+  }
+  .subjects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+
+  .subject-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 36px;
+    cursor: pointer;
+    transition: all .3s cubic-bezier(.25,.8,.25,1);
+    position: relative; overflow: hidden;
+  }
+  .subject-card::before {
+    content:''; position:absolute; inset:0;
+    opacity:0; transition: opacity .3s;
+    border-radius: 28px;
+  }
+  .subject-card:hover { transform: translateY(-6px); }
+  .subject-card:hover::before { opacity:1; }
+
+  .card-phys::before { background: var(--phys-glow); }
+  .card-eng::before  { background: var(--eng-glow);  }
+  .card-geo::before  { background: var(--geo-glow);  }
+
+  .card-phys:hover { border-color: rgba(91,140,255,0.35); box-shadow: 0 20px 60px rgba(91,140,255,0.15); }
+  .card-eng:hover  { border-color: rgba(255,123,123,0.35); box-shadow: 0 20px 60px rgba(255,123,123,0.15); }
+  .card-geo:hover  { border-color: rgba(78,207,179,0.35);  box-shadow: 0 20px 60px rgba(78,207,179,0.15);  }
+
+  .card-icon {
+    width:56px; height:56px; border-radius:16px;
+    display:flex; align-items:center; justify-content:center;
+    font-size: 1.6rem; margin-bottom: 24px;
+    position: relative; z-index:1;
+  }
+  .card-phys .card-icon { background: rgba(91,140,255,0.15); }
+  .card-eng  .card-icon { background: rgba(255,123,123,0.15); }
+  .card-geo  .card-icon { background: rgba(78,207,179,0.15);  }
+
+  .card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.55rem; font-weight:700; margin-bottom:8px;
+    position: relative; z-index:1;
+  }
+  .card-phys .card-name { color: var(--phys); }
+  .card-eng  .card-name { color: var(--eng);  }
+  .card-geo  .card-name { color: var(--geo);  }
+
+  .card-desc {
+    font-size: 0.9rem; color: var(--muted); line-height:1.6;
+    margin-bottom: 28px; position: relative; z-index:1;
+  }
+  .card-topics {
+    display: flex; flex-wrap:wrap; gap:8px;
+    position: relative; z-index:1;
+  }
+  .topic-pill {
+    padding: 6px 14px; border-radius:50px;
+    font-size: 0.76rem; font-weight:500;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--muted);
+    transition: all .2s;
+  }
+  .subject-card:hover .topic-pill {
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+  }
+  .card-arrow {
+    margin-top: 24px; font-size:0.85rem; font-weight:600;
+    display:flex; align-items:center; gap:6px;
+    position: relative; z-index:1;
+    transition: gap .2s;
+  }
+  .card-phys .card-arrow { color: var(--phys); }
+  .card-eng  .card-arrow { color: var(--eng); }
+  .card-geo  .card-arrow { color: var(--geo); }
+  .subject-card:hover .card-arrow { gap: 12px; }
+
+  /* ── MODAL OVERLAY ── */
+  .overlay {
+    display:none; position:fixed; inset:0; z-index:200;
+    background: rgba(5,5,10,0.82);
+    backdrop-filter: blur(16px);
+    align-items: flex-start; justify-content: center;
+    padding: 60px 24px 40px;
+    overflow-y: auto;
+  }
+  .overlay.active { display:flex; }
+
+  .modal {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 32px;
+    width:100%; max-width:900px;
+    padding: 48px;
+    position: relative;
+    animation: modalIn .35s cubic-bezier(.25,.8,.25,1);
+  }
+  .modal-close {
+    position: absolute; top:20px; right:20px;
+    width:36px; height:36px; border-radius:50%;
+    background: rgba(255,255,255,0.07);
+    border: none; color: var(--muted);
+    font-size:1.1rem; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition: all .2s;
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.14); color: var(--text); }
+
+  .modal-header { margin-bottom: 40px; }
+  .modal-icon {
+    width:60px; height:60px; border-radius:18px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.8rem; margin-bottom:20px;
+  }
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem; font-weight:700; margin-bottom:8px;
+  }
+  .modal-subtitle { font-size:0.9rem; color: var(--muted); }
+
+  /* ── CHAPTERS ── */
+  .chapters { display:flex; flex-direction:column; gap:12px; }
+  .chapter {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+  }
+  .chapter-head {
+    padding: 20px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+    cursor:pointer;
+    transition: background .2s;
+  }
+  .chapter-head:hover { background: rgba(255,255,255,0.03); }
+  .chapter-num {
+    font-size: 0.7rem; font-weight:700; letter-spacing:0.15em;
+    text-transform:uppercase; margin-bottom:4px;
+  }
+  .chapter-title-text {
+    font-size: 1rem; font-weight:600;
+  }
+  .chapter-toggle {
+    width:28px; height:28px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:0.9rem; background: rgba(255,255,255,0.05);
+    flex-shrink:0; transition: transform .3s;
+  }
+  .chapter.open .chapter-toggle { transform: rotate(180deg); }
+
+  .chapter-topics { display:none; padding: 0 24px 24px; }
+  .chapter.open .chapter-topics { display:block; }
+
+  .topic-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .topic-item {
+    display:flex; align-items:center; gap:12px;
+    padding: 14px 18px; border-radius:12px;
+    cursor:pointer;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid transparent;
+    transition: all .2s;
+  }
+  .topic-item:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: var(--border);
+    transform: translateX(4px);
+  }
+  .topic-dot {
+    width:8px; height:8px; border-radius:50%; flex-shrink:0;
+  }
+  .topic-item span { font-size:0.9rem; }
+
+  /* ── LESSON VIEW ── */
+  .lesson-view {
+    display:none; margin-top:32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius:20px; padding:32px;
+  }
+  .lesson-view.show { display:block; animation: fadeUp .4s; }
+  .lesson-back {
+    font-size:0.82rem; color: var(--muted);
+    cursor:pointer; display:flex; align-items:center; gap:6px;
+    margin-bottom:20px; transition: color .2s;
+  }
+  .lesson-back:hover { color: var(--text); }
+  .lesson-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem; font-weight:700; margin-bottom:20px;
+  }
+  .lesson-content {
+    font-size:0.95rem; line-height:1.85; color: #c0c0d8;
+  }
+  .lesson-content h3 {
+    font-family: 'Playfair Display', serif;
+    font-size:1.1rem; margin: 20px 0 10px; color: var(--text);
+  }
+  .lesson-content p { margin-bottom:14px; }
+  .lesson-content .formula {
+    background: rgba(255,255,255,0.05);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 12px 18px;
+    font-family: monospace; font-size:1rem;
+    margin: 14px 0; color: var(--accent);
+  }
+  .lesson-content ul { padding-left:20px; margin-bottom:14px; }
+  .lesson-content li { margin-bottom:6px; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(22px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes modalIn {
+    from { opacity:0; transform:scale(.96) translateY(16px); }
+    to   { opacity:1; transform:scale(1)   translateY(0); }
+  }
+  @keyframes blink {
+    0%,100% { opacity:1; } 50% { opacity:0; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:700px){
+    nav { padding: 0 20px; }
+    .subjects-section { padding: 80px 20px 60px; }
+    .modal { padding: 28px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">EduSphere</div>
+  <div class="nav-links">
+    <a href="#">Нүүр</a>
+    <a href="#">Хичээлүүд</a>
+    <a href="#">Тухай</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+  <p class="hero-eyebrow">Мэдлэгийн платформ</p>
+  <h1 class="hero-title">
+    <span>Суралцах</span>
+    <span class="hl">шинэ арга</span>
+  </h1>
+  <p class="hero-sub">Физик, Англи хэл, Газарзүй — гурван хичээлийн бүрэн агуулгыг нэг гоёмсог платформд нэгтгэлэм.</p>
+  <div class="hero-cta">
+    <a href="#subjects" class="btn btn-primary">Эхлэх →</a>
+    <a href="#" class="btn btn-ghost">Дэлгэрэнгүй</a>
+  </div>
+  <!-- Typewriter bar -->
+  <div class="typewriter-bar">
+    <div class="tw-label">Өдрийн мэдрэмж</div>
+    <div class="tw-text" id="tw"></div>
+  </div>
+</section>
+
+<!-- SUBJECTS -->
+<section class="subjects-section" id="subjects">
+  <p class="section-label">Хичээлүүд</p>
+  <h2 class="section-title">Юу сурах вэ?</h2>
+  <div class="subjects-grid">
+
+    <!-- Physics -->
+    <div class="subject-card card-phys" onclick="openSubject('phys')">
+      <div class="card-icon">⚛️</div>
+      <div class="card-name">Физик</div>
+      <p class="card-desc">Орчлон ертөнцийн хуулиудыг нээж, квант физикийн нарийн ертөнцийг судал.</p>
+      <div class="card-topics">
+        <span class="topic-pill">Механик</span>
+        <span class="topic-pill">Термодинамик</span>
+        <span class="topic-pill">Оптик</span>
+        <span class="topic-pill">Квант</span>
+      </div>
+      <div class="card-arrow">Нэвтрэх <span>→</span></div>
+    </div>
+
+    <!-- English -->
+    <div class="subject-card card-eng" onclick="openSubject('eng')">
+      <div class="card-icon">📖</div>
+      <div class="card-name">Англи хэл</div>
+      <p class="card-desc">Дүрэм, үг хэллэг, яриа болон бичгийн ур чадвараа нарийн дадлагаар хөгжүүл.</p>
+      <div class="card-topics">
+        <span class="topic-pill">Grammar</span>
+        <span class="topic-pill">Vocabulary</span>
+        <span class="topic-pill">Reading</span>
+        <span class="topic-pill">Writing</span>
+      </div>
+      <div class="card-arrow">Нэвтрэх <span>→</span></div>
+    </div>
+
+    <!-- Geography -->
+    <div class="subject-card card-geo" onclick="openSubject('geo')">
+      <div class="card-icon">🌍</div>
+      <div class="card-name">Газарзүй</div>
+      <p class="card-desc">Дэлхийн газар нутаг, уур амьсгал, хүн амын судалгааг дэлхийн хэмжээнд нэвтэр.</p>
+      <div class="card-topics">
+        <span class="topic-pill">Байгаль</span>
+        <span class="topic-pill">Уур амьсгал</span>
+        <span class="topic-pill">Хүн ам</span>
+        <span class="topic-pill">Эдийн засаг</span>
+      </div>
+      <div class="card-arrow">Нэвтрэх <span>→</span></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── PHYSICS MODAL ── -->
+<div class="overlay" id="modal-phys">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('phys')">✕</button>
+  <div class="modal-header">
+    <div class="modal-icon" style="background:rgba(91,140,255,0.15)">⚛️</div>
+    <div class="modal-title" style="color:var(--phys)">Физик</div>
+    <div class="modal-subtitle">9 бүлэг · 36 сэдэв · Онолын агуулга</div>
+  </div>
+  <div id="lesson-phys" class="lesson-view"></div>
+  <div class="chapters" id="chapters-phys">
+
+    <div class="chapter" id="ch-p1">
+      <div class="chapter-head" onclick="toggleChapter('ch-p1')">
+        <div><div class="chapter-num" style="color:var(--phys)">Бүлэг 01</div><div class="chapter-title-text">Кинематик</div></div>
+        <div class="chapter-toggle">▾</div>
+      </div>
+      <div class="chapter-topics">
+        <ul class="topic-list">
+          <li class="topic-item" onclick="showLesson('phys','Хөдөлгөөн ба шилжилт','<h3>Хөдөлгөөн гэж юу вэ?</h3><p>Биет нь орон зайд байрлалаа өөрчлөх үзэгдлийг <strong>хөдөлгөөн</strong> гэнэ. Хөдөлгөөнийг судалдаг физикийн салбарыг <em>Кинематик</em> гэнэ.</p><h3>Шилжилт ба замын зай</h3><p>Шилжилт — эхлэлийн болон төгсгөлийн цэгүүдийн хоорондох векторын зай. Замын зай — биетийн туулсан бодит зам.</p><div class="formula">s = x₂ − x₁ (шилжилт)</div><p>Шилжилт нь <strong>векторын хэмжигдэхүүн</strong> бол замын зай нь скалар хэмжигдэхүүн юм.</p><h3>Дундаж хурд</h3><div class="formula">v = Δx / Δt</div><p>Хурд нь хөдөлгөөний <strong>чиглэл болон хэмжээг</strong> агуулдаг векторын хэмжигдэхүүн юм.</p>')"><span class="topic-dot" style="background:var(--phys)"></span><span>Хөдөлгөөн ба шилжилт</span></li>
+          <li class="topic-item" onclick="showLesson('phys','Жигд хурдасгалт хөдөлгөөн','<h3>Хурдасгал (acceleration)</h3><p>Хурдасгал гэдэг нь нэгж хугацаанд хурдны өөрчлөлт юм.</p><div class="formula">a = Δv / Δt (м/с²)</div><h3>Жигд хурдасгалт хөдөлгөөний томьёонууд</h3><div class="formula">v = v₀ + at</div><div class="formula">s = v₀t + ½at²</div><div class="formula">v² = v₀² + 2as</div><h3>Жишээ</h3><p>Машин анхны хурдгүй байсан бөгөөд 4 м/с² хурдасгалтайгаар 5 секундэд хэдэн метр явах вэ?</p><div class="formula">s = 0·5 + ½·4·25 = 50 м</div>')"><span class="topic-dot" style="background:var(--phys)"></span><span>Жигд хурдасгалт хөдөлгөөн</span></li>
+          <li class="topic-item" onclick="showLesson('phys','Чөлөөт уналт','<h3>Чөлөөт уналт</h3><p>Агаарын эсэргүүцлийг үл тооцвол дэлхийн гадаргуу дээр бүх биет <strong>ижил хурдасгалтайгаар</strong> унадаг. Энэ хурдасгалыг таталцлын хурдасгал гэнэ.</p><div class="formula">g = 9.8 м/с²</div><h3>Уналтын томьёонууд</h3><div class="formula">h = ½gt²</div><div class="formula">v = gt</div><p>Галилео Галилей хамгийн анх чөлөөт унлатыг туршилтаар нотолсон. Пизагийн цамхгаас хоёр өөр жинтэй бөмбөлөг унагавал ижил хугацаанд газарт хүрдэг.</p>')"><span class="topic-dot" style="background:var(--phys)"></span><span>Чөлөөт уналт</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chapter" id="ch-p2">
+      <div class="chapter-head" onclick="toggleChapter('ch-p2')">
+        <div><div class="chapter-num" style="color:var(--phys)">Бүлэг 02</div><div class="chapter-title-text">Ньютоны хуулиуд</div></div>
+        <div class="chapter-toggle">▾</div>
+      </div>
+      <div class="chapter-topics">
+        <ul class="topic-list">
+          <li class="topic-item" onclick="showLesson('phys','Ньютоны I хууль','<h3>Инерцийн хууль</h3><p>Хэрэв биетэд хүч үйлчлэхгүй бол эсвэл үйлчлэх хүчнүүд нь тэнцвэртэй бол биет амрах буюу жигд шулуун хөдөлгөөнтэй хэвээр байна.</p><div class="formula">ΣF = 0 → v = const</div><h3>Инерци</h3><p>Биетийн хөдөлгөөнийхөө төлвийг хадгалах чанарыг <strong>инерци</strong> гэнэ. Масс их байх тусам инерци их байна.</p><ul><li>Машин хурдтай явж байгаад гэнэт зогсвол зорчигч урагшаа унах хандлагатай байна — инерцийн улмаас.</li></ul>')"><span class="topic-dot" style="background:var(--phys)"></span><span>Ньютоны I хууль</span></li>
+          <li class="topic-item" onclick="showLesson('phys','Ньютоны II хууль','<h3>Динамикийн үндсэн хууль</h3><p>Биетэд үйлчилж буй хүчнүүдийн нийлбэр нь биетийн масс ба хурдасгалын үржвэртэй тэнцүү.</p><div class="formula">F = ma</div><p>Хүч нэмэгдэх тусам хурдасгал нэмэгдэж, масс нэмэгдэх тусам хурдасгал буурна.</p><h3>Жишээ</h3><p>5 кг масстай биетэд 20 Н хүч үйлчилбэл хурдасгал нь:</p><div class="formula">a = F/m = 20/5 = 4 м/с²</div>')"><span class="topic-dot" style="background:var(--phys)"></span><span>Ньютоны II хууль</span></li>
+          <li class="topic-item" onclick="showLesson('phys','Ньютоны III хууль','<h3>Үйлдэл ба урвал</h3><p>Хоёр биет харилцан үйлчлэхдээ тэдгээрийн үйлчилгээ нь тэнцүү хэмжээтэй, харин эсрэг чиглэлтэй байна.</p><div class="formula">F₁₂ = −F₂₁</div><h3>Жишээ</h3><ul><li>Буу сумаа харвахад буу урагш буцаж дэлбэлдэг.</li><li>Пуужин шатамхай хийг доош шахаж, өөрөө дээш өргөгддөг.</li><li>Хүн газар дээр алхахад газрыг арагш түлхдэг, газар хүнийг урагш түлхдэг.</li></ul>')"><span class="topic-dot" style="background:var(--phys)"></span><span>Ньютоны III хууль</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chapter" id="ch-p3">
+      <div class="chapter-head" onclick="toggleChapter('ch-p3')">
+        <div><div class="chapter-num" style="color:var(--phys)">Бүлэг 03</div><div class="chapter-title-text">Термодинамик</div></div>
+        <div class="chapter-toggle">▾</div>
+      </div>
+      <div class="chapter-topics">
+        <ul class="topic-list">
+          <li class="topic-item" onclick="showLesson('phys','Дулааны хэмжих','<h3>Температур ба дулаан</h3><p>Температур — биетийн атом, молекулуудын дундаж кинетик энергийг тодорхойлдог хэмжигдэхүүн. Дулаан — дулааны нөлөөгөөр нэг биетээс нөгөөд шилждэг энерги.</p><div class="formula">Q = mcΔT</div><p>Энд: m — масс, c — хувийн дулаан багтаамж, ΔT — температурын өөрчлөлт.</p><h3>Дулааны тэлэлт</h3><p>Бараг бүх бие дулааны нөлөөгөөр тэлдэг. Шулуун тэлэлт:</p><div class="formula">ΔL = αL₀ΔT</div>')"><span class="topic-dot" style="background:var(--phys)"></span><span>Дулааны хэмжих</span></li>
+          <li class="topic-item" onclick="showLesson('phys','Термодинамикийн I хууль','<h3>Энергийн хадгалагдах хууль</h3><p>Системд дамжуулсан дулаан нь системийн дотоод энергийн өөрчлөлт болон системийн гүйцэтгэсэн ажлын нийлбэртэй тэнцүү.</p><div class="formula">Q = ΔU + A</div><p>Энд: Q — дулаан, ΔU — дотоод энергийн өөрчлөлт, A — гүйцэтгэсэн ажил.</p><h3>Изотерм процесс</h3><p>Температур тогтмол байхад: ΔU = 0, тиймээс Q = A.</p>')"><span class="topic-dot" style="background:var(--phys)"></span><span>Термодинамикийн I хууль</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /chapters-phys -->
+</div>
+</div>
+
+<!-- ── ENGLISH MODAL ── -->
+<div class="overlay" id="modal-eng">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('eng')">✕</button>
+  <div class="modal-header">
+    <div class="modal-icon" style="background:rgba(255,123,123,0.15)">📖</div>
+    <div class="modal-title" style="color:var(--eng)">Англи хэл</div>
+    <div class="modal-subtitle">8 бүлэг · 32 сэдэв · Онолын агуулга</div>
+  </div>
+  <div id="lesson-eng" class="lesson-view"></div>
+  <div class="chapters" id="chapters-eng">
+
+    <div class="chapter" id="ch-e1">
+      <div class="chapter-head" onclick="toggleChapter('ch-e1')">
+        <div><div class="chapter-num" style="color:var(--eng)">Бүлэг 01</div><div class="chapter-title-text">Parts of Speech</div></div>
+        <div class="chapter-toggle">▾</div>
+      </div>
+      <div class="chapter-topics">
+        <ul class="topic-list">
+          <li class="topic-item" onclick="showLesson('eng','Nouns — Нэр үг','<h3>What is a Noun?</h3><p>A noun is a word that names a person, place, thing, or idea. Nouns are one of the most fundamental parts of speech in English.</p><h3>Types of Nouns</h3><ul><li><strong>Common nouns:</strong> general names — dog, city, book</li><li><strong>Proper nouns:</strong> specific names — Mongolia, Einstein, Google</li><li><strong>Abstract nouns:</strong> ideas or concepts — freedom, love, knowledge</li><li><strong>Collective nouns:</strong> groups — team, flock, army</li></ul><h3>Countable vs Uncountable</h3><p>Countable nouns can be plural: one book → two books. Uncountable nouns have no plural: water, music, advice.</p>')"><span class="topic-dot" style="background:var(--eng)"></span><span>Nouns — Нэр үг</span></li>
+          <li class="topic-item" onclick="showLesson('eng','Verbs — Үйл үг','<h3>What is a Verb?</h3><p>A verb expresses an action, event, or state of being. Every complete sentence must contain a verb.</p><h3>Types of Verbs</h3><ul><li><strong>Action verbs:</strong> run, write, think, speak</li><li><strong>Linking verbs:</strong> be, seem, become, appear</li><li><strong>Auxiliary verbs:</strong> have, do, will, can, must</li></ul><h3>Verb Tenses Overview</h3><p>English has three main time frames — past, present, future — each with simple, continuous, perfect, and perfect continuous forms. Mastering tenses is key to accurate communication.</p><div class="formula">I work / I am working / I have worked / I have been working</div>')"><span class="topic-dot" style="background:var(--eng)"></span><span>Verbs — Үйл үг</span></li>
+          <li class="topic-item" onclick="showLesson('eng','Adjectives & Adverbs','<h3>Adjectives</h3><p>Adjectives describe or modify nouns. They answer questions like: What kind? Which one? How many?</p><ul><li>The <strong>tall</strong> mountain.</li><li>A <strong>beautiful</strong> song.</li><li><strong>Three</strong> students.</li></ul><h3>Adverbs</h3><p>Adverbs modify verbs, adjectives, or other adverbs. Many adverbs end in <em>-ly</em>.</p><ul><li>She sings <strong>beautifully</strong>.</li><li>He is <strong>very</strong> smart.</li><li>They arrived <strong>early</strong>.</li></ul><h3>Comparison</h3><div class="formula">tall → taller → tallest</div><div class="formula">beautiful → more beautiful → most beautiful</div>')"><span class="topic-dot" style="background:var(--eng)"></span><span>Adjectives & Adverbs</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chapter" id="ch-e2">
+      <div class="chapter-head" onclick="toggleChapter('ch-e2')">
+        <div><div class="chapter-num" style="color:var(--eng)">Бүлэг 02</div><div class="chapter-title-text">Tenses — Цаг</div></div>
+        <div class="chapter-toggle">▾</div>
+      </div>
+      <div class="chapter-topics">
+        <ul class="topic-list">
+          <li class="topic-item" onclick="showLesson('eng','Present Simple vs Continuous','<h3>Present Simple</h3><p>Used for habits, routines, general facts, and permanent situations.</p><div class="formula">Subject + base verb (+ s/es for he/she/it)</div><p>Examples: She <strong>works</strong> every day. Water <strong>boils</strong> at 100°C.</p><h3>Present Continuous</h3><p>Used for actions happening right now or temporary situations.</p><div class="formula">Subject + am/is/are + verb-ing</div><p>Examples: She <strong>is working</strong> right now. They <strong>are building</strong> a new school.</p><h3>Key Signal Words</h3><ul><li>Simple: always, usually, every day, never</li><li>Continuous: now, at the moment, currently, today</li></ul>')"><span class="topic-dot" style="background:var(--eng)"></span><span>Present Simple vs Continuous</span></li>
+          <li class="topic-item" onclick="showLesson('eng','Past Tenses','<h3>Past Simple</h3><p>For completed actions at a specific time in the past.</p><div class="formula">Subject + V2 (regular: -ed / irregular: went, saw, wrote)</div><h3>Past Continuous</h3><p>For actions that were in progress at a specific past time.</p><div class="formula">Subject + was/were + verb-ing</div><h3>Past Perfect</h3><p>For actions completed before another past action.</p><div class="formula">Subject + had + past participle</div><p>Example: By the time she arrived, he <strong>had already left</strong>.</p>')"><span class="topic-dot" style="background:var(--eng)"></span><span>Past Tenses</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chapter" id="ch-e3">
+      <div class="chapter-head" onclick="toggleChapter('ch-e3')">
+        <div><div class="chapter-num" style="color:var(--eng)">Бүлэг 03</div><div class="chapter-title-text">Writing Skills</div></div>
+        <div class="chapter-toggle">▾</div>
+      </div>
+      <div class="chapter-topics">
+        <ul class="topic-list">
+          <li class="topic-item" onclick="showLesson('eng','Paragraph Writing','<h3>Structure of a Paragraph</h3><p>A well-written paragraph has three main parts:</p><ul><li><strong>Topic sentence:</strong> States the main idea clearly.</li><li><strong>Supporting sentences:</strong> Develop the idea with details, examples, evidence.</li><li><strong>Concluding sentence:</strong> Wraps up or restates the main idea.</li></ul><h3>Coherence & Cohesion</h3><p>Use linking words to connect ideas smoothly:</p><ul><li>Addition: furthermore, moreover, in addition</li><li>Contrast: however, on the other hand, although</li><li>Result: therefore, as a result, consequently</li></ul>')"><span class="topic-dot" style="background:var(--eng)"></span><span>Paragraph Writing</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /chapters-eng -->
+</div>
+</div>
+
+<!-- ── GEOGRAPHY MODAL ── -->
+<div class="overlay" id="modal-geo">
+<div class="modal">
+  <button class="modal-close" onclick="closeModal('geo')">✕</button>
+  <div class="modal-header">
+    <div class="modal-icon" style="background:rgba(78,207,179,0.15)">🌍</div>
+    <div class="modal-title" style="color:var(--geo)">Газарзүй</div>
+    <div class="modal-subtitle">7 бүлэг · 28 сэдэв · Онолын агуулга</div>
+  </div>
+  <div id="lesson-geo" class="lesson-view"></div>
+  <div class="chapters" id="chapters-geo">
+
+    <div class="chapter" id="ch-g1">
+      <div class="chapter-head" onclick="toggleChapter('ch-g1')">
+        <div><div class="chapter-num" style="color:var(--geo)">Бүлэг 01</div><div class="chapter-title-text">Дэлхийн бүтэц</div></div>
+        <div class="chapter-toggle">▾</div>
+      </div>
+      <div class="chapter-topics">
+        <ul class="topic-list">
+          <li class="topic-item" onclick="showLesson('geo','Дэлхийн давхаргууд','<h3>Дэлхийн дотоод бүтэц</h3><p>Дэлхий нь дотоод болон гадаад бүтцийн хувьд хэд хэдэн давхаргаас бүрддэг.</p><ul><li><strong>Цөм (core):</strong> Гадаад шингэн цөм (Fe, Ni) ба дотоод хатуу цөм. Хамгийн өндөр температур 6000°C.</li><li><strong>Манти:</strong> Зузаан ~2900 км. Хагас хайлсан чулуулаг. Тектоник хавтангуудын хөдөлгөөн энд явагдана.</li><li><strong>Газрын хальс:</strong> Тивийн хальс 30–70 км, далайн хальс 5–10 км зузаантай.</li></ul><h3>Изостази</h3><p>Тивийн хальс нь хөнгөн учраас мантид хөвж байдаг — усан дээрх мөсбүрхүүлт шиг.</p>')"><span class="topic-dot" style="background:var(--geo)"></span><span>Дэлхийн давхаргууд</span></li>
+          <li class="topic-item" onclick="showLesson('geo','Тектоник хавтангууд','<h3>Хавтангийн тектоник онол</h3><p>Дэлхийн газрын хальс нь томоохон хэдэн хавтангаас бүрдэх бөгөөд тэдгээр нь аажмаар хөдөлж байдаг. Жилд дунджаар <strong>2–10 см</strong> хөдөлдөг.</p><h3>Хавтангийн хил</h3><ul><li><strong>Дивергент:</strong> Хавтангууд зайлах — Атлантийн далайн нуруу</li><li><strong>Конвергент:</strong> Хавтангууд мөргөлдөх — Гималайн нуруу</li><li><strong>Трансформ:</strong> Хавтангууд гулсах — Сан Андреасын хагарал</li></ul><h3>Газар хөдлөлт ба галт уул</h3><p>Хавтангуудын хил орчимд газар хөдлөлт ба галт уулын идэвхи хамгийн өндөр байна. "Галт уулын цагираг" нь Номхон далайн захаар орших.</p>')"><span class="topic-dot" style="background:var(--geo)"></span><span>Тектоник хавтангууд</span></li>
+          <li class="topic-item" onclick="showLesson('geo','Уул үүсэлт','<h3>Уул үүсэлтийн аргууд</h3><ul><li><strong>Атираат уул:</strong> Тектоник хавтангуудын мөргөлдөөнөөс атираа үүсдэг. Гималай, Альп, Анд.</li><li><strong>Блокон уул:</strong> Хагарлын дагуу блокуудын нэг нь өргөгддөг. Сьерра Невада.</li><li><strong>Галт уулын уул:</strong> Лав хуримтлагдан уул үүсдэг. Фудзи, Килиманжаро.</li></ul><h3>Элэгдэл</h3><p>Уул үүссэний дараа салхи, ус, мөстлөгийн нөлөөгөөр аажмаар элэгддэг. Хуучин уулнууд намхан, дугуйрсан хэлбэртэй байна (жишээ: Урал).</p>')"><span class="topic-dot" style="background:var(--geo)"></span><span>Уул үүсэлт</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chapter" id="ch-g2">
+      <div class="chapter-head" onclick="toggleChapter('ch-g2')">
+        <div><div class="chapter-num" style="color:var(--geo)">Бүлэг 02</div><div class="chapter-title-text">Уур амьсгал</div></div>
+        <div class="chapter-toggle">▾</div>
+      </div>
+      <div class="chapter-topics">
+        <ul class="topic-list">
+          <li class="topic-item" onclick="showLesson('geo','Уур амьсгалын бүсүүд','<h3>Кёппений ангилал</h3><p>Дэлхийн уур амьсгалыг температур, хур тунадасаар нь 5 үндсэн бүсэд хувааж үздэг:</p><ul><li><strong>A — Халуун орны:</strong> Жилийн дундаж температур >18°C. Экваторын орчим.</li><li><strong>B — Хуурай:</strong> Хур тунадас бага. Цөл, хагас цөл.</li><li><strong>C — Дулаан сэрүүн:</strong> 4 улирал тод илэрхийлэгдэнэ.</li><li><strong>D — Континентал:</strong> Хүйтэн өвөл, дулаан зун. Монгол энд хамаарна.</li><li><strong>E — Туйлын:</strong> Хамгийн хүйтэн. Мөсөн бүрхэл.</li></ul>')"><span class="topic-dot" style="background:var(--geo)"></span><span>Уур амьсгалын бүсүүд</span></li>
+          <li class="topic-item" onclick="showLesson('geo','Агаарын масс ба фронт','<h3>Агаарын масс</h3><p>Том нутагт нэгэн жигд шинж чанар (температур, чийгшил) бүхий агаарын их хэмжээг <strong>агаарын масс</strong> гэнэ.</p><h3>Цаг агаарын фронт</h3><ul><li><strong>Дулаан фронт:</strong> Дулаан агаар хүйтэн агаар дээр мөлхөн гарна → аажим борооны бороо.</li><li><strong>Хүйтэн фронт:</strong> Хүйтэн агаар дулааны доогуур дайрна → хурдан, хүчтэй аянга.</li></ul><h3>Даралтын систем</h3><p>Циклон (бага даралт) — муу цаг агаар. Антициклон (өндөр даралт) — тогтвортой цаг агаар.</p>')"><span class="topic-dot" style="background:var(--geo)"></span><span>Агаарын масс ба фронт</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="chapter" id="ch-g3">
+      <div class="chapter-head" onclick="toggleChapter('ch-g3')">
+        <div><div class="chapter-num" style="color:var(--geo)">Бүлэг 03</div><div class="chapter-title-text">Хүн ам ба хот</div></div>
+        <div class="chapter-toggle">▾</div>
+      </div>
+      <div class="chapter-topics">
+        <ul class="topic-list">
+          <li class="topic-item" onclick="showLesson('geo','Хүн амын өсөлт','<h3>Хүн амын дэлхийн өсөлт</h3><p>Дэлхийн хүн ам 2024 онд ~8.1 тэрбумд хүрсэн. 1800 онд ердөө 1 тэрбум байсан бол аж үйлдвэрийн хувьсгалаас хойш огцом өссөн.</p><h3>Өсөлтийн хурд</h3><div class="formula">r = (Б − У) / П × 1000 ‰</div><p>Б — төрөлт, У — нас баралт, П — хүн ам. Хөгжингүй орнуудад өсөлт удааширч, зарим нь буурч байна.</p><h3>Хүн амын хуваарилалт</h3><p>Дэлхийн хүн амын 60% гаруй нь Азид, дотор нь Хятад, Энэтхэгт амьдардаг. Монгол Улс нь нутаг дэвсгэрийн хэмжээнд харьцуулбал маш бага хүн амтай (<3 хүн/км²).</p>')"><span class="topic-dot" style="background:var(--geo)"></span><span>Хүн амын өсөлт</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /chapters-geo -->
+</div>
+</div>
+
+<script>
+// ── TYPEWRITER ──
+const quotes = [
+  "Физик бол байгалийн хэлний дүрэм юм.",
+  "Knowledge is the most powerful tool you can possess.",
+  "Газарзүй — дэлхийн нүүрийг уншиж сурах урлаг.",
+  "The more you learn, the more you realize you have yet to discover.",
+  "Мэдлэг — хэзээ ч хаанаас ч булааж авч чадахгүй баялаг.",
+  "Science is not only compatible with spirituality — it is a profound source of it.",
+  "Аялал бол хамгийн сайн сурах арга.",
+  "English opens a door to the world.",
+];
+let qi = 0, ci = 0, del = false;
+const el = document.getElementById('tw');
+function type() {
+  const q = quotes[qi];
+  if (!del) {
+    ci++;
+    el.innerHTML = q.slice(0,ci) + '<span class="tw-cursor"></span>';
+    if (ci === q.length) { del = true; setTimeout(type, 2400); return; }
+    setTimeout(type, 38 + Math.random()*22);
+  } else {
+    ci--;
+    el.innerHTML = q.slice(0,ci) + '<span class="tw-cursor"></span>';
+    if (ci === 0) { del = false; qi = (qi+1)%quotes.length; setTimeout(type, 400); return; }
+    setTimeout(type, 18);
+  }
+}
+type();
+
+// ── SUBJECT OPEN/CLOSE ──
+function openSubject(s) {
+  document.getElementById('modal-'+s).classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(s) {
+  document.getElementById('modal-'+s).classList.remove('active');
+  document.body.style.overflow = '';
+  hideLessons(s);
+}
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => {
+    if (e.target === o) {
+      const id = o.id.replace('modal-','');
+      closeModal(id);
+    }
+  });
+});
+
+// ── CHAPTER TOGGLE ──
+function toggleChapter(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+// ── SHOW LESSON ──
+function showLesson(subj, title, html) {
+  const lv = document.getElementById('lesson-'+subj);
+  const ch = document.getElementById('chapters-'+subj);
+  lv.innerHTML = `
+    <div class="lesson-back" onclick="hideLessons('${subj}')">← Буцах</div>
+    <div class="lesson-title">${title}</div>
+    <div class="lesson-content">${html}</div>
+  `;
+  lv.classList.add('show');
+  ch.style.display = 'none';
+  lv.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function hideLessons(subj) {
+  const lv = document.getElementById('lesson-'+subj);
+  const ch = document.getElementById('chapters-'+subj);
+  lv.classList.remove('show');
+  ch.style.display = '';
+}
+</script>
+</body>
+</html>
